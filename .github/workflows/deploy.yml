@@ -19,7 +19,19 @@ jobs:
           username: root
           password: ${{ secrets.SSH_PASSWORD }}
           script: |
+            # Buat folder jika belum ada, lalu masuk
+            mkdir -p /var/www/html/uassisop
             cd /var/www/html/uassisop
-            git pull origin main
-            docker compose pull
-            docker compose up -d
+            
+            # Jika belum ada git, inisialisasi dan ambil kodenya
+            if [ ! -d ".git" ]; then
+              git clone https://github.com/tiaeryanti/uassisop.git .
+            else
+              git pull origin main
+            fi
+            
+            # Jalankan docker jika ada konfigurasinya
+            if [ -f "docker-compose.yml" ]; then
+              docker compose pull
+              docker compose up -d
+            fi
